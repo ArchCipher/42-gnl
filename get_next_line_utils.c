@@ -77,24 +77,28 @@ char *ft_realloc(char *src, size_t old_len, size_t new_len)
     return (dst);
 }
 
+void    print_nl(int fd)
+{
+    char *line;
+
+    line = get_next_line(fd);
+    printf("'%s'\n",line);
+    free(line);
+    line = NULL;
+}
 
 int main()
 {
-    char *line1;
-    char *line2;
-
 	int fd = open("text.txt", O_RDONLY);
+    if (fd < 0)
+        return -1;
 	printf("!CALL 1!\n");
-    line1 = get_next_line(fd);
-	printf("'%s'\n",line1);
-    free(line1);
+    print_nl(fd);
     printf("!CALL 2!\n");
-    line2 = get_next_line(fd);
-	printf("'%s'\n",line1);
-    free(line2);
+    print_nl(fd);
 	printf("!CALL 3!\n");
-	printf("'%s'\n",get_next_line(fd));
+    print_nl(fd);
 	printf("!CALL 4!\n");
-	printf("'%s'\n",get_next_line(fd));
+	print_nl(fd);
 	close(fd);
 }
