@@ -58,20 +58,20 @@ void    *ft_memmove(void *dst, const void *src, size_t len)
     return dst;
 }
 
-char *ft_realloc(char *src, size_t old_len, size_t new_len)
+char *ft_realloc(char *src, size_t line_len, size_t new_len)
 {
     char *dst;
 
-    if (new_len == 0)
+    if (new_len < 1)
         return NULL;
-    if (old_len >= new_len)
+    if (line_len >= new_len)
         return src;
     dst = malloc(new_len);
     if (!dst)
         return NULL;
     if (src)
     {
-        dst = ft_memcpy(dst, src, old_len);
+        dst = ft_memcpy(dst, src, line_len);
         free(src);
     }
     return (dst);
