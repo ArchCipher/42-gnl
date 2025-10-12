@@ -38,6 +38,8 @@ char	*append_line(char *line, size_t old_len, const char *buf, size_t append_len
 	return (line);
 }
 
+
+
 char *get_next_line(int fd)
 {
 	static size_t	bytes_read;
@@ -67,7 +69,6 @@ char *get_next_line(int fd)
 		{
 			ft_memmove(buf, buf + append_len, bytes_read - append_len);
 			bytes_read -= append_len;
-			//buf[bytes_read - append_len] = 0;
 		}
 		else
 			buf[0] = 0;
