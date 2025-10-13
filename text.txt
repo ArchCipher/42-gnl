@@ -1,10 +1,5 @@
 Test line 1
 Test line 2
-Test line 3...
-and line 4!
-How long can i read!
-How many lines can i read?
-How many lines with a tiny buffer?
-Will this fail?
-When will malloc fail?
-Will it stop when line buffer is read fully?
+Test line 3
+and line 4!!!
+How long can you read?

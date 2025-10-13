@@ -9,19 +9,40 @@ size_t	get_append_len(char *buf, const char *ebp, size_t bytes_read)
 	return(ebp - buf + 1);
 }
 
+char	*ft_malloc_line(char *line, size_t line_len, size_t append_len, const char *ebp)
+{
+	static size_t	capacity;
+	size_t new_len;
+
+	new_len = line_len + append_len;
+	if (new_len < (SIZE_MAX / 2) - 1)
+	{
+		if (capacity == 0)
+		{
+			capacity = new_len * 2;
+			line = ft_realloc(line, line_len, capacity + 1);
+		}
+		capacity -= new_len;
+	}
+	else
+		line = ft_realloc(line, line_len, new_len + 1);
+	if (ebp)
+		capacity = 0;
+	return (line);
+}
+
 char	*append_line(char *line, char *buf, const char *ebp, size_t bytes_read)
 {
 	size_t			append_len;
 	static size_t	line_len;
-	size_t			new_len;
 
 	append_len = get_append_len(buf, ebp, bytes_read);
-	new_len = line_len + append_len;
-	line = ft_realloc(line, line_len, new_len + 1);
+	line = ft_malloc_line(line, line_len, append_len, ebp);
 	if (!line)
 		return NULL;
 	ft_memcpy(line + line_len, buf, append_len);
 	line_len += append_len;
+	line[line_len] = 0;
 	if (ebp)
 		line_len = 0;
 	return (line);
@@ -35,7 +56,7 @@ char *get_next_line(int fd)
 	char			*line;
 
 	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0) < 0)
-		return NULL;
+		return (NULL);
 	line = NULL;
 	ebp = NULL;
 	while (!ebp)
@@ -43,8 +64,8 @@ char *get_next_line(int fd)
 		if (buf[0] == 0)
 		{
 			bytes_read = read(fd, buf, BUFFER_SIZE);
-			if (bytes_read < 0)
-				return (NULL);
+			if (bytes_read < 1)
+				return (line);
 		}
 		ebp = ft_memchr(buf, '\n', bytes_read);
 		line = append_line(line, buf, ebp, bytes_read);

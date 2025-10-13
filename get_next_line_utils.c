@@ -71,20 +71,28 @@ char *ft_realloc(char *src, size_t line_len, size_t new_len)
         return NULL;
     if (src)
     {
-        dst = ft_memcpy(dst, src, line_len);
+        ft_memcpy(dst, src, line_len);
         free(src);
     }
     return (dst);
 }
 
-void    print_nl(int fd)
+void    print_nl(int fd, unsigned int call)
 {
     char *line;
+    unsigned int num;
 
-    line = get_next_line(fd);
-    printf("'%s'\n",line);
-    free(line);
-    line = NULL;
+    num = 1;
+    while (call--)
+    {
+        line = get_next_line(fd);
+        if (!line)
+            return;
+        printf("!CALL %d!\n'%s'\n", num, line);
+        free(line);
+        line = NULL;
+        num--;
+    }
 }
 
 int main()
@@ -92,13 +100,7 @@ int main()
 	int fd = open("text.txt", O_RDONLY);
     if (fd < 0)
         return -1;
-	printf("!CALL 1!\n");
-    print_nl(fd);
-    printf("!CALL 2!\n");
-    print_nl(fd);
-	printf("!CALL 3!\n");
-    print_nl(fd);
-	printf("!CALL 4!\n");
-	print_nl(fd);
+    unsigned int call = 10;
+    print_nl(fd, call);
 	close(fd);
 }
