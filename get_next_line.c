@@ -1,5 +1,4 @@
 #include "get_next_line.h"
-#include <stdio.h>
 
 // calculate append_len
 size_t	get_append_len(char *buf, const char *ebp, size_t bytes_read)
@@ -9,20 +8,22 @@ size_t	get_append_len(char *buf, const char *ebp, size_t bytes_read)
 	return(ebp - buf + 1);
 }
 
-char	*ft_malloc_line(char *line, size_t line_len, size_t append_len, const char *ebp)
+char	*grow_buffer(char *line, size_t line_len, size_t append_len, const char *ebp)
 {
 	static size_t	capacity;
 	size_t new_len;
 
-	new_len = line_len + append_len;
-	if (new_len < (SIZE_MAX / 2) - 1)
+	if (SIZE_MAX - line_len > append_len)
+		new_len = line_len + append_len;
+	else
+		new_len = SIZE_MAX - 1;
+	if (capacity < new_len)
 	{
-		if (capacity == 0)
-		{
-			capacity = new_len * 2;
-			line = ft_realloc(line, line_len, capacity + 1);
-		}
-		capacity -= new_len;
+		if (capacity < ( SIZE_MAX / 2 ) - 1)
+			capacity += append_len * 2;
+		else
+			capacity = new_len;
+		line = ft_realloc(line, line_len, capacity + 1);
 	}
 	else
 		line = ft_realloc(line, line_len, new_len + 1);
@@ -37,7 +38,7 @@ char	*append_line(char *line, char *buf, const char *ebp, size_t bytes_read)
 	static size_t	line_len;
 
 	append_len = get_append_len(buf, ebp, bytes_read);
-	line = ft_malloc_line(line, line_len, append_len, ebp);
+	line = grow_buffer(line, line_len, append_len, ebp);
 	if (!line)
 		return NULL;
 	ft_memcpy(line + line_len, buf, append_len);
