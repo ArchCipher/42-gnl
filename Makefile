@@ -5,19 +5,19 @@ LEAKTEST    = leak.out
 # compiler and flags
 CC          = cc
 FLAGS       = -Wall -Werror -Wextra
-SFLAGS      = -fsanitize=address
+SFLAG      = -fsanitize=address
 DFLAG		= -g
 
 # headers
 HEADERS     = get_next_line.h
 
 # source files
-SRCS = get_next_line.c get_next_line_utils.c
+SRCS = get_next_line.c get_next_line_utils.c main.c
 
 all:
-	@echo "Usage: "
-	@echo "make <BUFFER_SIZE>"
-	@echo "make leak <BUFFER_SIZE>"
+	@echo "Compiling with BUFFER_SIZE=64"
+	$(CC) $(FLAGS) $(DFLAG) $(SRCS) -o $(NAME)
+	./$(NAME)
 
 .PHONY: all clean fclean re
 
@@ -32,14 +32,15 @@ Makefile:
 	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
 	./$(NAME)
 
-#	$(CC) $(FLAGS) $(SFLAGS) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
+# 	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
+#	$(CC) $(FLAGS) $(SFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
+
+leak: $(SRCS)
+	@echo "Compiling with BUFFER_SIZE=64"
+	$(CC) $(FLAGS) $(SRCS) -o $(LEAKTEST)
+	leaks --atExit -- ./$(LEAKTEST)
 
 leak%: $(SRCS)
-	@if ! echo "$*" | grep -q '^[0-9]\+$$'; then \
-		echo "Invalid target: leak$*"; \
-		echo "Usage: make <BUFFER_SIZE> or make leak <BUFFER_SIZE>"; \
-		exit 1; \
-	fi
 	@echo "Compiling with BUFFER_SIZE=$* for leak test"
 	$(CC) $(FLAGS) -D BUFFER_SIZE=$* $(SRCS) -o $(LEAKTEST)
 	leaks --atExit -- ./$(LEAKTEST)

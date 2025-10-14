@@ -1,3 +1,5 @@
 *.out
 *.dSYM/
 *.o
+get_next_line2.c
+gnlTester/

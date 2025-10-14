@@ -1,100 +1,84 @@
 #include "get_next_line.h"
 
 /*
-	GET_NEXT_LINE
-	Reads from the file descriptor to get the next first line. The function
-	reads BUFFER_SIZE characters at a time and appends the characters to the
-	return line. It only appends the characters until it meets a newline or the
-	end of file is reached. The remaining characters stay in the buffer for the
-	next call of get_next_line. If a newline is already present in the initial
-	buffer, no additional characters are read.
-	PARAMETER(S)
-		File descriptor to read from
-	RETURN
-	The function returns the next line read from the file descriptor as a
-	string. If there is nothing left to be read or if an error occurred, it
-	returns NULL.
+	NAME
+		get_next_line
+	SYNOPSIS
+		#include "get_next_line.h"
+	PROTOTYPE
+		char *get_next_line(int fd);
+	DESCRIPTION:
+		Reads a line from file descriptor fd.
+		Uses static buffer to maintain state between calls.
+		Buffer size defined by BUFFER_SIZE macro.
+	RETURN VALUE
+		Next line (including \n) or NULL on EOF/error.
+	EXTERNAL FUNC(S)
+		read, malloc, free
+
 */
 
-size_t	check_overflow(size_t line_len, size_t *append_len)
+size_t	get_append_len(char *buf, const char *nlp, size_t line_len, size_t bytes_read)
 {
-	size_t malloc_len;
+	size_t append_len;
 
-	if (SIZE_MAX - line_len <= *append_len)
-	{
-		*append_len = SIZE_MAX - line_len - 1; 
-		return (SIZE_MAX - 1);
-	}
-	malloc_len = line_len + *append_len;
-	if (malloc_len < (SIZE_MAX / 2) - 1)
-		malloc_len *= 2;
-	return (malloc_len);
-}
-
-char	*append_line(char *line, char *buf, size_t *line_len, size_t append_len)
-{
-	size_t malloc_len;
-
-	malloc_len = check_overflow(*line_len, &append_len);
-	line = ft_realloc(line, *line_len, malloc_len + 1);
-	if (!line)
-		return (NULL);
-	ft_memcpy(line + *line_len, buf, append_len);
-	*line_len += append_len;
-	line[*line_len] = 0;
-	return (line);
-}
-
-size_t	get_append_len(int fd, char *buf, char **ebp)
-{
-	size_t	bytes_read;
-	size_t	rem_bytes;
-	char	*nlp;
-
-	if (buf[0] != 0)
-	{
-		*ebp = ft_memchr(buf, '\0', BUFFER_SIZE);
-			rem_bytes = *ebp - buf;
-		nlp = ft_memchr(buf, '\n', BUFFER_SIZE);
-		if (nlp)
-			return (nlp - buf + 1);
-		return (rem_bytes);
-	}
-	bytes_read = read(fd, buf, BUFFER_SIZE);
-	if (bytes_read < 1)
-		return (0);
-	*ebp = buf + bytes_read;
-	nlp = ft_memchr(buf, '\n', bytes_read);
 	if (nlp)
-		return (nlp - buf + 1);
-	return(bytes_read);
+		append_len = nlp - buf + 1;
+	else
+		append_len = bytes_read;
+	if (SIZE_MAX - line_len < append_len)
+		append_len = SIZE_MAX - line_len;
+	return(append_len);
+}
+
+char	*append_line(char *line, char *buf, const char *nlp, size_t bytes_read)
+{
+	static size_t	line_len;
+	static size_t	capacity;
+	size_t			append_len;
+
+	append_len = get_append_len(buf, nlp, line_len, bytes_read);
+	line = ft_realloc(line, line_len, append_len, &capacity);
+	if (!line)
+		return NULL;
+	ft_memcpy(line + line_len, buf, append_len);
+	line_len += append_len;
+	line[line_len] = 0;
+	if (nlp)
+	{
+		capacity = 0;
+		line_len = 0;
+	}
+	return (line);
 }
 
 char *get_next_line(int fd)
 {
 	static char		buf[BUFFER_SIZE];
-	char			*ebp;
+	static size_t	bytes_read;
+	char			*nlp;
 	char			*line;
-	size_t			line_len;
-	size_t			append_len;
 
 	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	line = NULL;
-	line_len = 0;
-	while (1)
+	nlp = NULL;
+	while (!nlp)
 	{
-		append_len = get_append_len(fd, buf, &ebp);
-		if (append_len < 1)
-			return (line);
-		line = append_line(line, buf, &line_len, append_len);
-		buf[0] = 0;
-		if (line[line_len - 1] == '\n')
+		if (bytes_read == 0)
 		{
-			ft_memmove(buf, buf + append_len, BUFFER_SIZE - append_len);
-			break;
+			bytes_read = read(fd, buf, BUFFER_SIZE);
+			if (bytes_read < 1)
+				return (line);
 		}
+		nlp = ft_memchr(buf, '\n', bytes_read);
+		line = append_line(line, buf, nlp, bytes_read);
+		if (!line)
+			return NULL;
+		if (!nlp)
+			bytes_read = 0;
 	}
-	buf[BUFFER_SIZE - append_len + 1] = 0;
+	bytes_read -= nlp - buf + 1;
+	ft_memmove(buf, nlp + 1, bytes_read);
 	return (line);
 }

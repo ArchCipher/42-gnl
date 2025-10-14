@@ -1,9 +1,5 @@
 #include "get_next_line.h"
 
-#include <stdio.h>
-#include <fcntl.h>
-
-
 void    *ft_memchr(const void *s, int c, size_t n)
 {
     const unsigned char *str;
@@ -58,15 +54,19 @@ void    *ft_memmove(void *dst, const void *src, size_t len)
     return dst;
 }
 
-char *ft_realloc(char *src, size_t line_len, size_t new_len)
+char *ft_realloc(char *src, size_t line_len, size_t append_len, size_t *capacity)
 {
-    char *dst;
+    char    *dst;
 
-    if (new_len < 1)
-        return NULL;
-    if (line_len >= new_len)
+    if (append_len <= *capacity - line_len)
         return src;
-    dst = malloc(new_len);
+    else if (*capacity == 0)
+        *capacity = append_len;
+    else if (*capacity < (SIZE_MAX / 2) - 1)
+        *capacity *= 2;
+    else
+        *capacity = SIZE_MAX - 1;
+    dst = malloc(*capacity + 1);
     if (!dst)
         return NULL;
     if (src)
@@ -75,32 +75,4 @@ char *ft_realloc(char *src, size_t line_len, size_t new_len)
         free(src);
     }
     return (dst);
-}
-
-void    print_nl(int fd, unsigned int call)
-{
-    char *line;
-    unsigned int num;
-
-    num = 1;
-    while (call--)
-    {
-        line = get_next_line(fd);
-        if (!line)
-            return;
-        printf("!CALL %d!\n'%s'\n", num, line);
-        free(line);
-        line = NULL;
-        num--;
-    }
-}
-
-int main()
-{
-	int fd = open("text.txt", O_RDONLY);
-    if (fd < 0)
-        return -1;
-    unsigned int call = 10;
-    print_nl(fd, call);
-	close(fd);
 }
