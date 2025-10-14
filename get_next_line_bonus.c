@@ -46,20 +46,6 @@ char	*append_line(char *line, size_t *line_len, char *buf, char **buf_pos, size_
 	return (line);
 }
 
-size_t	read_file(int fd, char *buf)
-{
-	size_t	bytes_read;
-
-	bytes_read = 0;
-	while (bytes_read < BUFFER_SIZE && buf + bytes_read != '\n')
-		{
-			bytes_read = read(fd, buf, 1);
-			if (bytes_read < 0)
-				return (bytes_read);
-		}
-	return(bytes_read);
-}
-
 char *get_next_line(int fd)
 {
 	static char		buf[BUFFER_SIZE];
@@ -79,7 +65,7 @@ char *get_next_line(int fd)
 	{
 		if (buf_pos = buf + bytes_read)
 		{
-			bytes_read = read_file(fd, buf);
+			bytes_read = read_file(fd, buf, BUFFER_SIZE);
 			if (bytes_read < 0)
 				return (NULL);
 			buf_pos = buf;
@@ -88,7 +74,5 @@ char *get_next_line(int fd)
 		if (line_len == 0 || line_len == SIZE_MAX - 1)
 			break;
 	}
-	// bytes_read -= buf_pos - buf + 1;
-	// ft_memmove(buf, buf_pos + 1, bytes_read);
 	return (line);
 }
