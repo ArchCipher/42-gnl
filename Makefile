@@ -1,5 +1,6 @@
 # library and project names
 NAME        = test.out
+BONUS		= bonus.out
 LEAKTEST    = leak.out
 
 # compiler and flags
@@ -12,11 +13,14 @@ DFLAG		= -g
 HEADERS     = get_next_line.h
 
 # source files
-SRCS = get_next_line.c get_next_line_utils.c main.c
+MAIN	= main
+SRCS	= get_next_line get_next_line_utils
+MSRCS	= $(addsuffix .c, $(SRCS) $(MAIN))
+BSRCS	= $(addsuffix _bonus.c, $(SRCS)) $(addsuffix .c, $(SRCS)) 
 
 all:
 	@echo "Compiling with BUFFER_SIZE=64"
-	$(CC) $(FLAGS) $(DFLAG) $(SRCS) -o $(NAME)
+	$(CC) $(FLAGS) $(DFLAG) $(MSRCS) -o $(NAME)
 	./$(NAME)
 
 .PHONY: all clean fclean re
@@ -27,25 +31,35 @@ Makefile:
 	@echo "Usage: make <BUFFER_SIZE> or make leak <BUFFER_SIZE>"
 	@exit 1
 
-%: $(SRCS)
+%: $(MSRCS)
 	@echo "Compiling with BUFFER_SIZE=$@"
-	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
+	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(MSRCS) -o $(NAME)
 	./$(NAME)
 
 # 	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
 #	$(CC) $(FLAGS) $(SFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
 
-leak: $(SRCS)
-	@echo "Compiling with BUFFER_SIZE=64"
-	$(CC) $(FLAGS) $(SRCS) -o $(LEAKTEST)
+bonus: $(BSRCS)
+	@echo "Compiling with BUFFER_SIZE=64 for bonus"
+	$(CC) $(FLAGS) $(BSRCS) -o $(BONUS)
+	./$(BONUS)
+
+bonus%: $(BSRCS)
+	@echo "Compiling with BUFFER_SIZE=$* for bonus"
+	$(CC) $(FLAGS) -D BUFFER_SIZE=$* $(BSRCS) -o $(BONUS)
+	./$(BONUS)
+
+leak: $(MSRCS)
+	@echo "Compiling with BUFFER_SIZE=64 for leak test"
+	$(CC) $(FLAGS) $(MSRCS) -o $(LEAKTEST)
 	leaks --atExit -- ./$(LEAKTEST)
 
-leak%: $(SRCS)
+leak%: $(MSRCS)
 	@echo "Compiling with BUFFER_SIZE=$* for leak test"
-	$(CC) $(FLAGS) -D BUFFER_SIZE=$* $(SRCS) -o $(LEAKTEST)
+	$(CC) $(FLAGS) -D BUFFER_SIZE=$* $(MSRCS) -o $(LEAKTEST)
 	leaks --atExit -- ./$(LEAKTEST)
 
 fclean:
-	rm -f $(NAME) $(LEAKTEST)
+	rm -f $(NAME) $(BONUS) $(LEAKTEST)
 
-re: fclean all
+re: fclean all bonus leak
