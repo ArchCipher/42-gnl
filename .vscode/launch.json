@@ -5,7 +5,7 @@
       "name": "Debug get_next_line",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/test.out",
+      "program": "${workspaceFolder}/bonus.out",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
