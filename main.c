@@ -17,7 +17,7 @@ void    print_nl(int fd, unsigned int call)
         printf("!CALL %d!\n'%s'\n", num, line);
         free(line);
         line = NULL;
-        num--;
+        num++;
     }
 }
 

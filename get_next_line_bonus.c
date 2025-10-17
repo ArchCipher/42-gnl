@@ -27,97 +27,106 @@ Number of bytes read (≥ 0)
 -1 on error
 */
 
-// char	*get_append_len(size_t line_len, char *buf, char **buf_pos, size_t bytes_read)
-// {
-// 	char	*nlp;
+size_t	get_append_len(char *buf, size_t line_len, ssize_t valid_bytes)
+{
+	size_t	append_len;
+	char	*nl_ptr;
 
-// 	nlp = ft_memchr((buf + **buf_pos), '\n', bytes_read);
-// 	if (!nlp)
-// 		nlp = buf + bytes_read;
-// 	if (nlp - buf_pos > (SIZE_MAX - line_len - 1))
-// 		return (SIZE_MAX - line_len - 1);
-// 	return(nlp - *buf_pos);
+	nl_ptr = ft_memchr(buf, '\n', valid_bytes);
+	if (nl_ptr)
+		append_len = nl_ptr - buf + 1;
+	else
+		append_len = valid_bytes;
+	if (SIZE_MAX - line_len - 1 < append_len)
+		append_len = SIZE_MAX - line_len - 1;
+	return(append_len);
+}
+
+// ssize_t	fill_buffer(int fd, char *buf, size_t *buf_len)
+// {
+// 	ssize_t	read_bytes;
+
+// 	read_bytes = read(fd, buf + *buf_len, BUFFER_SIZE - *buf_len);
+// 	if (read_bytes > 0)
+// 		*buf_len += read_bytes;
+// 	return (read_bytes);
 // }
+
+size_t	fill_buffer(int fd, char *buf)
+{
+	size_t	valid_bytes;
+	ssize_t	bytes_read;
+	char	*buf_ptr;
+	char	*nl_ptr;
+
+	if (buf[0] == 0)
+	{
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+		if (bytes_read < 0)
+			return (0);
+		else if (bytes_read < BUFFER_SIZE)
+			buf[bytes_read] = 0;
+		return (bytes_read);
+	}
+	buf_ptr = ft_memchr(buf, '\0', BUFFER_SIZE);
+	valid_bytes = buf_ptr - buf;
+	nl_ptr = ft_memchr(buf, '\n', valid_bytes);
+	if (nl_ptr)
+		return (valid_bytes);
+	bytes_read = read(fd, buf + valid_bytes, BUFFER_SIZE - valid_bytes);
+	valid_bytes += bytes_read;
+	if (valid_bytes != BUFFER_SIZE)
+		buf[valid_bytes] = 0;
+	return (valid_bytes);
+}
+
+char	*append_line(char *line, size_t line_len, char *buf, size_t append_len)
+{
+	ft_memcpy(line + line_len, buf, append_len);
+	line[line_len + append_len] = 0;
+	return (line);
+}
 
 char *get_next_line(int fd)
 {
-	static char	buf[BUFFER_SIZE + 2];
-	char		*line;
-	char		*l_ptr;
-	ssize_t		append_len;
+	static char		buf[BUFFER_SIZE];
+	char			*line;
+	size_t			line_len;
+	size_t			capacity;
+	size_t			append_len;
 
 	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	line = NULL;
-	l_ptr = NULL;
-	while (1) // (line[l_ptr - line] == '\n') // || l_ptr != '\0' // || line_len == SSIZE_MAX - 1
+	line_len = 0;
+	capacity = 0;
+	append_len = 0;
+	while (1)
 	{
-		if (buf[BUFFER_SIZE] == 0)
-			append_len = read_file(fd, buf);
-		else
-			append_len = get_append_len(buf, line, l_ptr);
+		append_len = get_append_len(buf, line_len, fill_buffer(fd, buf));
 		if (append_len < 1)
 			return (line);
-		line = ft_realloc(line, &l_ptr, append_len);
-		if (!line || !l_ptr)
-			return (NULL);
-		l_ptr = append_line(l_ptr, buf, append_len);
-		if (l_ptr - 1 == '\n')
-			break;
+		if (capacity < line_len + append_len + 1)
+		{
+			if (line_len + append_len + 1 < SIZE_MAX / 2 && buf[append_len] != '\n')
+				capacity = (line_len + append_len) * 2 + 1;
+			else
+				capacity = line_len + append_len + 1;
+			line = ft_realloc(line, line_len, capacity);
+			if (!line)
+				return (NULL);
+		}
+		line = append_line(line, line_len, buf, append_len);
+		line_len += append_len;
+		if (BUFFER_SIZE == append_len)
+			buf[0] = 0;
+		else
+		{
+			ft_memmove(buf, buf + append_len, BUFFER_SIZE - append_len);
+			buf[BUFFER_SIZE - append_len] = 0;
+		}
+		if (line[line_len - 1] == '\n')
+			break ;
 	}
 	return (line);
-}
-
-size_t	read_file(int fd, char *buf)
-{
-	ssize_t	nbyte;
-	ssize_t	rbyte;
-	char	*tbyte;
-	char	*nl_ptr;
-
-	nbyte = 256;
-	tbyte = buf;
-	nl_ptr = NULL;
-	if (nbyte > BUFFER_SIZE)
-		nbyte = BUFFER_SIZE;
-	while (tbyte - buf < BUFFER_SIZE && !nl_ptr)
-	{
-		buf[BUFFER_SIZE] = 0;
-		rbyte = read(fd, tbyte, nbyte);
-		if (rbyte < 1)
-			return (rbyte);
-		nl_ptr = ft_memchr(tbyte, '\n', rbyte);
-		tbyte += rbyte;
-	}
-	if (!nl_ptr)
-		return(tbyte - buf);
-	buf[BUFFER_SIZE] = (unsigned char)(tbyte - (nl_ptr + 1));
-	buf[BUFFER_SIZE + 1] = (unsigned char)((tbyte - buf) / 255);
-	return ((nl_ptr + 1) - buf);
-}
-
-size_t	get_append_len(char *buf, char *line, char *l_ptr)
-{
-	ssize_t	rem_byte;
-	ssize_t	nbyte;
-	char	*tbyte;
-	char	*nl_ptr;
-
-	nbyte = 256;
-	rem_byte = (unsigned char) buf[BUFFER_SIZE];
-	tbyte = buf + ((unsigned char) buf[BUFFER_SIZE + 1] * nbyte);
-	nl_ptr = ft_memchr(tbyte - rem_byte, '\n', rem_byte);
-	if (!nl_ptr)
-		return (rem_byte);
-	buf[BUFFER_SIZE] = (unsigned char)(tbyte - (nl_ptr + 1));
-	buf[BUFFER_SIZE + 1] = (unsigned char)((tbyte - buf) / 255);
-	return ((nl_ptr + 1) - buf);
-}
-
-char	*append_line(char *l_ptr, char *buf, ssize_t append_len)
-{
-	ft_memcpy(l_ptr, buf, append_len);
-	l_ptr += append_len;
-	l_ptr = 0;
-	return (l_ptr);
 }

@@ -1,6 +1,6 @@
 #include "get_next_line.h"
 
-void    *ft_memchr(const void *s, int c, ssize_t n)
+void    *ft_memchr(const void *s, int c, size_t n)
 {
     const unsigned char *str;
 
@@ -14,7 +14,7 @@ void    *ft_memchr(const void *s, int c, ssize_t n)
     return NULL;
 }
 
-void    *ft_memcpy(void *dst, const void *src, ssize_t n)
+void    *ft_memcpy(void *dst, const void *src, size_t n)
 {
     unsigned char *d;
     const unsigned char *s;
@@ -30,7 +30,7 @@ void    *ft_memcpy(void *dst, const void *src, ssize_t n)
     return (dst);
 }
 
-void    *ft_memmove(void *dst, const void *src, ssize_t len)
+void    *ft_memmove(void *dst, const void *src, size_t len)
 {
     unsigned char *d;
     const unsigned char *s;
@@ -54,12 +54,12 @@ void    *ft_memmove(void *dst, const void *src, ssize_t len)
     return dst;
 }
 
-char *ft_realloc(char *src, ssize_t line_len, ssize_t append_len, ssize_t *capacity)
+char *ft_realloc(char *src, size_t line_len, size_t append_len, size_t *capacity)
 {
     char    *dst;
 
     if (append_len <= *capacity - line_len)
-        return src;
+        return (src);
     else if (*capacity == 0)
         *capacity = append_len;
     else if (*capacity < (SSIZE_MAX / 2) - 1)
