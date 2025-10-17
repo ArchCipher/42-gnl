@@ -1,33 +1,36 @@
 #include "get_next_line_bonus.h"
 
-void    *ft_memchr(const void *s, int c, size_t n)
+size_t  ft_strlen(const char *s)
 {
-    const unsigned char *str;
+    size_t  n;
 
-    str = (const unsigned char *)s;
-    while(n-- > 0)
-    {
-        if (*str == (unsigned char)c)
-            return ((void *)str);
-        str++;
-    }
-    return NULL;
+    n = 0;
+    while(s[n])
+        n++;
+    return (n);
 }
 
-void    *ft_memcpy(void *dst, const void *src, size_t n)
+ssize_t  find_nl(const char *s, ssize_t n)
 {
-    unsigned char *d;
-    const unsigned char *s;
+    ssize_t  i;
 
-    if (!dst && !src && n > 0)
-        return (NULL);
-    d = (unsigned char *)dst;
-    s = (unsigned char *)src;
-    while(n-- > 0)
+    i = 0;
+    while(i < n)
     {
-        *(d++) = *(s++);
+        if (s[i] == '\n')
+            return (i + 1);
+        i++;
     }
-    return (dst);
+    return (n);
+}
+
+void *ft_memcpy(void *dst, const void *src, size_t n)
+{
+    unsigned char *d = dst;
+    const unsigned char *s = src;
+    while (n--)
+        *d++ = *s++;
+    return dst;
 }
 
 void    *ft_memmove(void *dst, const void *src, size_t len)
