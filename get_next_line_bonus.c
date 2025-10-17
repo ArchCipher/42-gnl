@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kmurugan <kmurugan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/17 18:57:37 by kmurugan          #+#    #+#             */
+/*   Updated: 2025/10/17 18:57:42 by kmurugan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line_bonus.h"
 
 /*
@@ -58,13 +70,13 @@ ssize_t	get_append_len(int fd, char *buf)
 	return (find_nl(buf, bytes_read));
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static char		buf[BUFFER_SIZE];
-	char			*line;
-	size_t			line_len;
-	size_t			capacity;
-	size_t			append_len;
+	static char	buf[BUFFER_SIZE];
+	char		*line;
+	size_t		line_len;
+	size_t		capacity;
+	size_t		append_len;
 
 	if (BUFFER_SIZE <= 0 || fd < 0)
 		return (NULL);
