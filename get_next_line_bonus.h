@@ -17,15 +17,9 @@
 # include <stdlib.h> // malloc, free
 # include <unistd.h> // read, ssize_t
 
-<<<<<<< HEAD
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
-# endif
-=======
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 256
 #endif
->>>>>>> 67f4ca1 (added macro to redefine BUFFER_SIZE in case of malloc failure)
 
 # if BUFFER_SIZE > 2000000000 // || BUFFER_SIZE < 1
 #  undef BUFFER_SIZE
