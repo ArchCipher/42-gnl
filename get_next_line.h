@@ -2,8 +2,13 @@
 # define GET_NEXT_LINE_H
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 256
 #endif
+
+# if BUFFER_SIZE > 2000000000 // || BUFFER_SIZE < 1
+#  undef BUFFER_SIZE
+#  define BUFFER_SIZE 256
+# endif
 
 #include <stdlib.h>
 #include <unistd.h>
