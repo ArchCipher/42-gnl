@@ -6,7 +6,7 @@
 /*   By: kmurugan <kmurugan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 18:57:37 by kmurugan          #+#    #+#             */
-/*   Updated: 2025/10/17 18:57:42 by kmurugan         ###   ########.fr       */
+/*   Updated: 2025/10/18 14:33:06 by kmurugan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,60 @@ char	*get_next_line(int fd)
 			buf[BUFFER_SIZE - append_len] = '\0';
 		}
 		if (line[line_len - 1] == '\n')
-			break ;
+			return (line);
 	}
-	return (line);
 }
+
+char	*get_next_line(int fd)
+{
+	static char	buf[BUFFER_SIZE];
+	size_t		len;
+	char		*line;
+	ssize_t		r;
+	size_t		n;
+	size_t		cap;
+	if (!buf[0])
+		r = read(fd, buf, BUFFER_SIZE);
+		if (r <= 0)
+		return (line);
+	n = 0;
+	while (buf[n] && buf[n] != '\n')
+		n++;
+	if (buf[n] == '\n')
+		n++;
+	if (len + n + 1 > cap)
+	{
+		cap = (len + n) * 2 + 1;
+		line = ft_realloc(line, len, cap);
+		if (!line)
+			return (NULL);
+	}
+	ft_memcpy(line + len, buf, n);
+	len += n;
+	line[len] = 0;
+	ft_memmove(buf, buf + n, BUFFER_SIZE - n);
+	buf[BUFFER_SIZE - n] = 0;
+	if (line[len - 1] == '\n' || !buf[0])
+		return (line);
+}
+// if (!buf[0] && (r = read(fd, buf, BUFFER_SIZE)) <= 0)
+// 	return (line);
+// n = 0;
+// while (buf[n] && buf[n] != '\n')
+// 	n++;
+// if (buf[n] == '\n')
+// 	n++;
+// if (len + n + 1 > cap)
+// {
+// 	cap = (len + n) * 2 + 1;
+// 	line = ft_realloc(line, len, cap);
+// 	if (!line)
+// 		return (NULL);
+// }
+// ft_memcpy(line + len, buf, n);
+// len += n;
+// line[len] = 0;
+// ft_memmove(buf, buf + n, BUFFER_SIZE - n);
+// buf[BUFFER_SIZE - n] = 0;
+// if (line[len - 1] == '\n' || !buf[0])
+// 	return (line);

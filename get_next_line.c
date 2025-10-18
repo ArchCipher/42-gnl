@@ -26,9 +26,10 @@ Number of bytes read (≥ 0)
 -1 on error
 */
 
-size_t	get_append_len(char *buf, const char *nlp, size_t line_len, ssize_t bytes_read)
+size_t	get_append_len(char *buf, const char *nlp, size_t line_len,
+		ssize_t bytes_read)
 {
-	size_t append_len;
+	size_t	append_len;
 
 	if (nlp)
 		append_len = nlp - buf + 1;
@@ -36,7 +37,7 @@ size_t	get_append_len(char *buf, const char *nlp, size_t line_len, ssize_t bytes
 		append_len = bytes_read;
 	if (SSIZE_MAX - line_len < append_len)
 		append_len = SSIZE_MAX - line_len;
-	return(append_len);
+	return (append_len);
 }
 
 char	*append_line(char *line, char *buf, const char *nlp, ssize_t bytes_read)
@@ -48,7 +49,7 @@ char	*append_line(char *line, char *buf, const char *nlp, ssize_t bytes_read)
 	append_len = get_append_len(buf, nlp, line_len, bytes_read);
 	line = ft_realloc(line, line_len, append_len, &capacity);
 	if (!line)
-		return NULL;
+		return (NULL);
 	ft_memcpy(line + line_len, buf, append_len);
 	line_len += append_len;
 	line[line_len] = 0;
@@ -60,12 +61,12 @@ char	*append_line(char *line, char *buf, const char *nlp, ssize_t bytes_read)
 	return (line);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static char		buf[BUFFER_SIZE];
-	static ssize_t	bytes_read;
-	char			*nlp;
-	char			*line;
+	static char buf[BUFFER_SIZE];
+	static ssize_t bytes_read;
+	char *nlp;
+	char *line;
 
 	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0) < 0)
 		return (NULL);
@@ -82,7 +83,7 @@ char *get_next_line(int fd)
 		nlp = ft_memchr(buf, '\n', bytes_read);
 		line = append_line(line, buf, nlp, bytes_read);
 		if (!line)
-			return NULL;
+			return (NULL);
 		if (!nlp)
 			bytes_read = 0;
 	}
