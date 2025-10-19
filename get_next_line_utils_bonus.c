@@ -22,20 +22,6 @@ size_t	ft_strlen(const char *s)
 	return (n);
 }
 
-ssize_t	find_nl(const char *s, ssize_t n)
-{
-	ssize_t	i;
-
-	i = 0;
-	while (i < n)
-	{
-		if (s[i] == '\n')
-			return (i + 1);
-		i++;
-	}
-	return (n);
-}
-
 void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
 	unsigned char		*d;
@@ -47,41 +33,20 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
+/*
+DESCRIPTION
+	Locates the first occurrence of the character c in the string s, stops after n bytes or at
+	the first null terminator. Returns a pointer to the byte located, or NULL if
+	no such character exists within n bytes or if s is NULL.
+*/
+
+char    *ft_mstrchr(const char *s, int c, size_t n)
 {
-	unsigned char		*d;
-	const unsigned char	*s;
-
-	if (dst == src || len == 0)
-		return (dst);
-	d = (unsigned char *)dst;
-	s = (unsigned char *)src;
-	if (d < s)
-	{
-		while (len-- > 0)
-			*(d++) = *(s++);
-	}
-	else
-	{
-		d += len;
-		s += len;
-		while (len-- > 0)
-			*(--d) = *(--s);
-	}
-	return (dst);
-}
-
-char	*ft_realloc(char *line, size_t line_len, size_t capacity)
-{
-	char	*dst;
-
-	dst = malloc(capacity);
-	if (!dst)
+	if (!s)
 		return (NULL);
-	if (line)
-	{
-		ft_memcpy(dst, line, line_len);
-		free(line);
-	}
-	return (dst);
+    while(n-- > 0 && (unsigned char)*s && ((unsigned char)*s != (unsigned char)c))
+        s++;
+    if ((unsigned char)*s == (unsigned char)c)
+        return ((char *)s);
+    return (NULL);
 }

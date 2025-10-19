@@ -29,16 +29,13 @@
 
 // get_next_line
 char	*get_next_line(int fd);
-ssize_t	get_append_len(int fd, char *buf);
-size_t	calculate_new_capacity(size_t line_len, size_t append_len, char *buf);
-char	*append_line(char *line, size_t *line_len, char *buf,
-			size_t append_len);
+ssize_t	read_buffer(int fd, char *buf);
+char	*append_line(char *line, size_t *line_len, char *buf, size_t append_len);
+char	*ft_grow_line(char *line, size_t line_len, size_t append_len, size_t *capacity);
 
 // get_next_line_utils
 size_t	ft_strlen(const char *s);
-ssize_t	find_nl(const char *s, ssize_t n);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
-void	*ft_memmove(void *dst, const void *src, size_t len);
-char	*ft_realloc(char *line, size_t line_len, size_t capacity);
+char    *ft_mstrchr(const char *s, int c, size_t n);
 
 #endif
