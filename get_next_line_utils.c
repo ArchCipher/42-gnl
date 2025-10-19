@@ -1,78 +1,40 @@
 #include "get_next_line.h"
 
-void    *ft_memchr(const void *s, int c, size_t n)
+size_t	ft_strlen(const char *s)
 {
-    const unsigned char *str;
+	size_t	n;
 
-    str = (const unsigned char *)s;
-    while(n-- > 0)
-    {
-        if (*str == (unsigned char)c)
-            return ((void *)str);
-        str++;
-    }
-    return NULL;
+	n = 0;
+	while (s[n])
+		n++;
+	return (n);
 }
 
-void    *ft_memcpy(void *dst, const void *src, size_t n)
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-    unsigned char *d;
-    const unsigned char *s;
+	unsigned char		*d;
+	const unsigned char	*s = src;
 
-    if (!dst && !src && n > 0)
-        return (NULL);
-    d = (unsigned char *)dst;
-    s = (unsigned char *)src;
-    while(n-- > 0)
-    {
-        *(d++) = *(s++);
-    }
-    return (dst);
+	d = dst;
+	while (n--)
+		*d++ = *s++;
+	return (dst);
 }
 
-void    *ft_memmove(void *dst, const void *src, size_t len)
+/*
+DESCRIPTION
+	Locates the first occurrence of the character c in the string s, stops after n bytes or at
+	the first null terminator. Returns a pointer to the byte located, or NULL if
+	no such character exists within n bytes or if s is NULL.
+*/
+
+char    *ft_mstrchr(const char *s, int c, size_t n)
 {
-    unsigned char *d;
-    const unsigned char *s;
-
-    if (dst == src || len == 0)
-        return dst;
-    d = (unsigned char *)dst;
-    s = (unsigned char *)src;
-    if (d < s)
-    {
-        while(len-- > 0)
-            *(d++) = *(s++);
-    }
-    else
-    {
-        d += len;
-        s += len;
-        while(len-- > 0)
-            *(--d) = *(--s);
-    }
-    return dst;
-}
-
-char *ft_realloc(char *src, size_t line_len, size_t append_len, size_t *capacity)
-{
-    char    *dst;
-
-    if (append_len <= *capacity - line_len)
-        return (src);
-    else if (*capacity == 0)
-        *capacity = append_len;
-    else if (*capacity < (SSIZE_MAX / 2) - 1)
-        *capacity *= 2;
-    else
-        *capacity = SSIZE_MAX - 1;
-    dst = malloc(*capacity + 1);
-    if (!dst)
-        return NULL;
-    if (src)
-    {
-        ft_memcpy(dst, src, line_len);
-        free(src);
-    }
-    return (dst);
+	if (!s)
+		return (NULL);
+    while(n-- > 0 && (unsigned char)*s && ((unsigned char)*s != (unsigned char)c))
+        s++;
+    if ((unsigned char)*s == (unsigned char)c)
+        return ((char *)s);
+    return (NULL);
 }

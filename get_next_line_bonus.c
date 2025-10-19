@@ -46,10 +46,10 @@ char	*get_next_line(int fd)
 		append_len = read_buffer(fd, buf[fd]);
 		if (append_len < 1)
 			return (line);
-		line = ft_grow_line(line, line_len, append_len, &capacity);
+		line = grow_line(line, line_len, append_len, &capacity);
 		if (!line)
 			return (NULL);
-		line = ft_append_line(line, &line_len, buf[fd], append_len);
+		line = append_line(line, &line_len, buf[fd], append_len);
 		if (line[line_len - 1] == '\n')
 			return (line);
 	}
@@ -88,7 +88,7 @@ DESCRIPTION
 	or NULL if the allocation fails or if src is NULL.
 */
 
-char	*ft_grow_line(char *src, size_t src_len, size_t append_len, size_t *capacity)
+char	*grow_line(char *src, size_t src_len, size_t append_len, size_t *capacity)
 {
 	char	*dst;
 	size_t	needed_capacity;

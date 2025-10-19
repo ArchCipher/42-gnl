@@ -30,8 +30,8 @@
 // get_next_line
 char	*get_next_line(int fd);
 ssize_t	read_buffer(int fd, char *buf);
+char	*grow_line(char *line, size_t line_len, size_t append_len, size_t *capacity);
 char	*append_line(char *line, size_t *line_len, char *buf, size_t append_len);
-char	*ft_grow_line(char *line, size_t line_len, size_t append_len, size_t *capacity);
 
 // get_next_line_utils
 size_t	ft_strlen(const char *s);
