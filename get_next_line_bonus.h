@@ -14,6 +14,7 @@
 # define GET_NEXT_LINE_BONUS_H
 
 # include <stdint.h> // SIZE_MAX
+# include <stdio.h> // FOPEN_MAX
 # include <stdlib.h> // malloc, free
 # include <unistd.h> // read, ssize_t
 
@@ -21,15 +22,10 @@
 #define BUFFER_SIZE 256
 #endif
 
-# if BUFFER_SIZE > 2000000000 // || BUFFER_SIZE < 1
+# if BUFFER_SIZE * FOPEN_MAX > 2000000000 // || BUFFER_SIZE < 1
 #  undef BUFFER_SIZE
 #  define BUFFER_SIZE 256
 # endif
-
-// # if BUFFER_SIZE * FOPEN_MAX > 1000000000 || BUFFER_SIZE < 1
-// #  undef BUFFER_SIZE
-// #  define BUFFER_SIZE 42
-// # endif
 
 // get_next_line
 char	*get_next_line(int fd);
