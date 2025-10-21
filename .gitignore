@@ -3,3 +3,4 @@
 *.o
 get_next_line2.c
 gnlTester/
+.DS_Store

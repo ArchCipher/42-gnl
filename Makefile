@@ -20,8 +20,8 @@ BSRCS	= $(addsuffix _bonus.c, $(SRCS)) $(MAIN)
 
 # No explicit BUFFER_SIZE
 all:
-	@echo "Compiling with BUFFER_SIZE=255"
-	$(CC) $(FLAGS) $(DFLAG) $(MSRCS) -o $(NAME)
+	@echo "Compiling with BUFFER_SIZE=256"
+	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) $(MSRCS) -o $(NAME)
 	./$(NAME)
 
 # Explicitly handle Makefile to prevent it from being treated as a buffer size
@@ -33,27 +33,24 @@ Makefile:
 # Handle explicit BUFFER_SIZE
 %: $(MSRCS) $(MAIN)
 	@echo "Compiling with BUFFER_SIZE=$@"
-	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(MSRCS) -o $(NAME)
+	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) -D BUFFER_SIZE=$@ $(MSRCS) -o $(NAME)
 	./$(NAME)
-
-# 	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
-#	$(CC) $(FLAGS) $(SFLAG) -D BUFFER_SIZE=$@ $(SRCS) -o $(NAME)
 
 # No explicit BUFFER_SIZE
 bonus: $(BSRCS)
-	@echo "Compiling with BUFFER_SIZE=255 for bonus"
-	$(CC) $(FLAGS) $(DFLAG) $(BSRCS) -o $(BONUS)
+	@echo "Compiling with BUFFER_SIZE=256 for bonus"
+	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) $(BSRCS) -o $(BONUS)
 	./$(BONUS)
 
 # Handle explicit BUFFER_SIZE
 bonus%: $(BSRCS)
 	@echo "Compiling with BUFFER_SIZE=$* for bonus"
-	$(CC) $(FLAGS) $(DFLAG) -D BUFFER_SIZE=$* $(BSRCS) -o $(BONUS)
+	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) -D BUFFER_SIZE=$* $(BSRCS) -o $(BONUS)
 	./$(BONUS)
 
 # No explicit BUFFER_SIZE
 leak: $(MSRCS)
-	@echo "Compiling with BUFFER_SIZE=255 for leak test"
+	@echo "Compiling with BUFFER_SIZE=256 for leak test"
 	$(CC) $(FLAGS) $(MSRCS) -o $(LEAKTEST)
 	leaks --atExit -- ./$(LEAKTEST)
 

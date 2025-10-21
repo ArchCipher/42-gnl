@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kmurugan <kmurugan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/20 10:29:20 by kmurugan          #+#    #+#             */
+/*   Updated: 2025/10/21 19:34:03 by kmurugan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 size_t	ft_strlen(const char *s)
@@ -21,20 +33,19 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-/*
-DESCRIPTION
-	Locates the first occurrence of the character c in the string s, stops after n bytes or at
-	the first null terminator. Returns a pointer to the byte located, or NULL if
-	no such character exists within n bytes or if s is NULL.
-*/
-
-char    *ft_mstrchr(const char *s, int c, size_t n)
+void	*ft_memchr(const void *s, int c, size_t n)
 {
+	const unsigned char	*str;
+
 	if (!s)
 		return (NULL);
-    while(n-- > 0 && (unsigned char)*s && ((unsigned char)*s != (unsigned char)c))
-        s++;
-    if ((unsigned char)*s == (unsigned char)c)
-        return ((char *)s);
-    return (NULL);
+	str = (const unsigned char *)s;
+	while (n-- > 0)
+	{
+		if (*str == (unsigned char)c)
+			return ((void *)str);
+		str++;
+	}
+	return (NULL);
 }
+

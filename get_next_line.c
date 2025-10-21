@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kmurugan <kmurugan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/20 10:29:25 by kmurugan          #+#    #+#             */
+/*   Updated: 2025/10/21 19:15:05 by kmurugan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 /*
@@ -8,8 +20,9 @@
 	PROTOTYPE
 		char *get_next_line(int fd);
 	DESCRIPTION:
-		Reads a line from file descriptor fd using a static buffer to maintain state between calls.
-		The buffer size is defined by the BUFFER_SIZE macro during compilation.
+		Reads a line from file descriptor using a static buffer to maintain state
+		between calls. The buffer size can be defined by the BUFFER_SIZE macro
+		during compilation.
 	RETURN VALUE
 		Returns the next line (including \n) or NULL on EOF/error.
 	EXTERNAL FUNC(S)
@@ -45,7 +58,7 @@ char	*get_next_line(int fd)
 
 /*
 DESCRIPTION
-		Reads from fd if buffer empty and returns bytes to append up to newline
+		Reads from fd if buffer empty and returns bytes to append up to new line
 		or upto end of buffer or EOF. Returns -1 on error or 0 on EOF.
 */
 
@@ -63,20 +76,20 @@ ssize_t	read_buffer(int fd, char *buf)
 		else if (bytes_read < BUFFER_SIZE)
 			buf[bytes_read] = 0;
 	}
-	nl_pos = ft_mstrchr(buf, '\n', bytes_read);
+	nl_pos = ft_memchr(buf, '\n', bytes_read);
 	if (!nl_pos)
 		return (bytes_read);
 	return (nl_pos - buf + 1);
-	
 }
 
 /*
 DESCRIPTION
-	Reallocates the line to the new capacity and returns a pointer to the new line,
-	or NULL if the allocation fails or if src is NULL.
+	Reallocates the line to the new capacity and returns a pointer to the
+	new line, or NULL if the allocation fails or if src is NULL.
 */
 
-char	*grow_line(char *src, size_t src_len, size_t append_len, size_t *capacity)
+char	*grow_line(char *src, size_t src_len, size_t append_len,
+		size_t *capacity)
 {
 	char	*dst;
 	size_t	needed_capacity;
@@ -90,7 +103,10 @@ char	*grow_line(char *src, size_t src_len, size_t append_len, size_t *capacity)
 		*capacity = needed_capacity;
 	dst = malloc(*capacity);
 	if (!dst)
+	{
+		free(src);
 		return (NULL);
+	}
 	if (src)
 		ft_memcpy(dst, src, src_len);
 	free(src);
@@ -99,11 +115,11 @@ char	*grow_line(char *src, size_t src_len, size_t append_len, size_t *capacity)
 
 /*
 DESCRIPTION
-	Appends the bytes from the buffer to the line and returns a pointer to the new line,
-	or NULL if the allocation fails or if line is NULL.
+	Appends the bytes from the buffer to the line and returns a pointer to the
+	new line, or NULL if the allocation fails or if line is NULL.
 */
 
-char *append_line(char *line, size_t *line_len, char *buf, size_t append_len)
+char	*append_line(char *line, size_t *line_len, char *buf, size_t append_len)
 {
 	ft_memcpy(line + *line_len, buf, append_len);
 	*line_len += append_len;
