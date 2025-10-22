@@ -18,7 +18,6 @@
 # include <unistd.h> // read, ssize_t
 
 #define MAX_STATIC_BUFFER_SIZE 1073741824 // 1GB
-// #define	MAX_READ_SIZE			2147479552 // max read() on Linux
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 256
@@ -32,10 +31,6 @@
 # if BUFFER_SIZE > MAX_STATIC_BUFFER_SIZE
 #  error BUFFER_SIZE too large for static allocation
 # endif
-
-// # if BUFFER_SIZE > MAX_READ_SIZE
-// #  error BUFFER_SIZE exceeds read() limit on Linux
-// # endif
 
 // get_next_line
 char	*get_next_line(int fd);
