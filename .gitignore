@@ -5,3 +5,4 @@ get_next_line2.c
 gnlTester/
 .DS_Store
 .vscode/launch.json
+text.out

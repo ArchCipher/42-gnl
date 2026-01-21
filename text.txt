@@ -3,3 +3,21 @@ Test line 2
 Test line 3
 and line 4!!!
 How long can you read?
+
+## Key Challenges & Solutions
+
+### Challenge 1: Static Variable State Management
+**Problem:** Maintaining buffer state between function calls  
+**Solution:** Used static character array to store leftover data
+
+### Challenge 2: Multiple File Descriptors (Bonus)
+**Problem:** Static variables are shared across all calls  
+**Solution:** Implemented linked list or array to track state per file descriptor
+
+### Challenge 3: Buffer Size Optimization
+**Problem:** Reading one byte at a time is inefficient  
+**Solution:** Read in chunks defined by `BUFFER_SIZE`, extract lines as needed
+
+### Challenge 4: Memory Leaks
+**Problem:** Properly freeing allocated memory  
+**Solution:** Careful tracking of allocated strings and freeing at appropriate times
