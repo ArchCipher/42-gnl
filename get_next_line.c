@@ -12,6 +12,12 @@
 
 #include "get_next_line.h"
 
+static ssize_t	read_buffer(int fd, char *buf);
+static char		*grow_line(char *line, size_t line_len, size_t append_len,
+					size_t *capacity);
+static char		*append_line(char *line, size_t *line_len, char *buf,
+					size_t append_len);
+
 /*
 	NAME
 		get_next_line
