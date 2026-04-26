@@ -17,7 +17,7 @@
 # include <stdlib.h> // malloc, free
 # include <unistd.h> // read, ssize_t
 
-#define MAX_STATIC_BUFFER_SIZE 1073741824 // 1GB
+# define MAX_STATIC_BUFFER_SIZE 1073741824 // 1GB
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 256

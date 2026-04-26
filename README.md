@@ -98,4 +98,9 @@ The project has been tested with:
 
 ---
 
+## Resources
+
+[Reading and Writing Files in C (fopen vs. open)](https://www.youtube.com/watch?v=BQJBe4IbsvQ)
+[Oceano - gnl explained](https://www.youtube.com/watch?v=8E9siq7apUU)
+
 *This project demonstrates mastery of file I/O operations, static variables, and efficient memory management in C.*

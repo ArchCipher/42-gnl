@@ -22,7 +22,6 @@ BSRCS	= $(addsuffix _bonus.c, $(SRCS)) $(MAIN)
 all:
 	@echo "Compiling with BUFFER_SIZE=256"
 	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) $(MSRCS) -o $(NAME)
-	./$(NAME)
 
 # Explicitly handle Makefile to prevent it from being treated as a buffer size
 Makefile:
@@ -34,19 +33,16 @@ Makefile:
 %: $(MSRCS) $(MAIN)
 	@echo "Compiling with BUFFER_SIZE=$@"
 	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) -D BUFFER_SIZE=$@ $(MSRCS) -o $(NAME)
-	./$(NAME)
 
 # No explicit BUFFER_SIZE
 bonus: $(BSRCS)
 	@echo "Compiling with BUFFER_SIZE=256 for bonus"
 	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) $(BSRCS) -o $(BONUS)
-	./$(BONUS)
 
 # Handle explicit BUFFER_SIZE
 bonus%: $(BSRCS)
 	@echo "Compiling with BUFFER_SIZE=$* for bonus"
 	$(CC) $(FLAGS) $(DFLAG) $(SFLAG) -D BUFFER_SIZE=$* $(BSRCS) -o $(BONUS)
-	./$(BONUS)
 
 # No explicit BUFFER_SIZE
 leak: $(MSRCS)

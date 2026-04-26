@@ -16,21 +16,6 @@
 #include <stdio.h> // printf
 #include <time.h>  // rand
 
-int	main(void)
-{
-	int		fd;
-	char	*line;
-
-	fd = open("file.txt", O_RDONLY);
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
-}
-
 // Uncomment to test malloc failure scenarios (for leak checking)
 // char *my_malloc(size_t size)
 // {
@@ -39,3 +24,18 @@ int	main(void)
 // 		return (NULL);
 // 	return (malloc(size));
 // }
+
+int	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("text.txt", O_RDONLY);
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd);
+	return (0);
+}
